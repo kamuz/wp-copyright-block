@@ -16,11 +16,20 @@ import { useBlockProps } from '@wordpress/block-editor';
  * @return {Element} Element to render.
  */
 export default function save( props ) {
-	const startingYear = props.attributes.startingYear;
+	const { showStartingYear, startingYear } = props.attributes;
 	const currentYear = new Date().getFullYear().toString();
+
+	let displayDate;
+
+	if ( showStartingYear && startingYear ) {
+		displayDate = startingYear + ' – ' + currentYear;
+	} else {
+		displayDate = currentYear;
+	}
+
 	return (
 		<p { ...useBlockProps.save() }>
-			{ 'Copyright' } &copy; { startingYear } - { currentYear }
+			{ 'Copyright' } &copy; { displayDate }
 		</p>
 	);
 }

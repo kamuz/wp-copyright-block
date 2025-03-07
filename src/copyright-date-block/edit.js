@@ -12,7 +12,7 @@ import { __ } from '@wordpress/i18n';
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import { PanelBody, TextControl } from '@wordpress/components';
+import { PanelBody, TextControl, ToggleControl } from '@wordpress/components';
 
 /**
  * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
@@ -31,30 +31,63 @@ import './editor.scss';
  * @return {Element} Element to render.
  */
 export default function Edit( { attributes, setAttributes } ) {
-	const { startingYear } = attributes;
+	console.log(attributes);
+	const { showStartingYear, startingYear } = attributes;
 	const currentYear = new Date().getFullYear().toString();
+
+	//
+	let displayDate;
+
+	if ( showStartingYear && startingYear ) {
+		displayDate = startingYear + ' – ' + currentYear;
+	} else {
+		displayDate = currentYear;
+	}
 
 	return (
 		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Settings', 'copyright-date-block' ) }>
-					<TextControl
-						label={ __(
-							'Starting year',
+					<ToggleControl
+						__nextHasNoMarginBottom
+						// If showStartingYear is true set checked attribute
+						checked = { !! showStartingYear }
+						// Label with localization string
+						label = { __(
+							'Show starting year',
 							'copyright-date-block'
 						) }
-						value = { startingYear }
-						onChange={ ( value ) =>
-							setAttributes( { startingYear: value } )
+						onChange={ () =>
+							setAttributes( {
+								// If setting will changed need invert current value
+								showStartingYear: !showStartingYear,
+							} )
 						}
 					/>
+					{ showStartingYear && ( // If showStartingYear is true will run next code
+						<TextControl
+							// Controll margin
+							__nextHasNoMarginBottom
+							// Label for setting
+							label={ __(
+								'Starting year',
+								'copyright-date-block'
+							) }
+							// If false this always empty string
+							value={ startingYear || '' }
+							// If change value, need rewrite var startingYear
+							onChange={ ( value ) =>
+								setAttributes( { startingYear: value } )
+							}
+						/>
+					) }
 				</PanelBody>
 			</InspectorControls>
 			<p { ...useBlockProps() }>
 				{ __(
 					'Copyright',
 					'copyright-date-block'
-				) } &copy; { startingYear } - { currentYear }
+				) } &copy; { displayDate }
 			</p>
 		</>
 	);
