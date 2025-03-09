@@ -31,7 +31,6 @@ import './editor.scss';
  * @return {Element} Element to render.
  */
 export default function Edit( { attributes, setAttributes } ) {
-	console.log(attributes);
 	const { showStartingYear, startingYear } = attributes;
 	const currentYear = new Date().getFullYear().toString();
 
